@@ -5,6 +5,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
+import com.mongodb.MongoCompressor;
 import com.mongodb.ReadPreference;
 import com.mongodb.WriteConcern;
 import com.mongodb.client.MongoClient;
@@ -19,15 +20,10 @@ import org.springframework.context.annotation.Configuration;
  * Aqui o ganho importante está em:
  *
  * pool maior
- *
  * maxConnecting
- *
  * retryWrites
- *
  * Snappy compressor
- *
  * WriteConcern.W1
- *
  * insertMany nativo depois
  */
 @Configuration
@@ -51,7 +47,7 @@ public class MongoClientConfig {
                 .writeConcern(WriteConcern.W1)
                 .readPreference(ReadPreference.primary())
                 .compressorList(List.of(
-                        new com.mongodb.MongoCompressor("snappy")
+                        MongoCompressor.createSnappyCompressor()
                 ))
                 .applyToConnectionPoolSettings(pool -> pool
                         .maxSize(maxPoolSize)

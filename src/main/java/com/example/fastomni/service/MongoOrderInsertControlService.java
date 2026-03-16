@@ -1,18 +1,17 @@
 package com.example.fastomni.service;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 import com.mongodb.MongoBulkWriteException;
 import com.mongodb.bulk.BulkWriteError;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.InsertManyOptions;
-
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * classe com controle de insert e erros dentro do lot, para permitir aceitar saves parciais e expor quais foram os que deram errado
@@ -21,6 +20,7 @@ import org.springframework.stereotype.Service;
  * se houver duplicado, ele não derruba os válidos
  * ele te devolve exatamente os índices duplicados e os índices que falharam no lote, o que é compatível com o comportamento de insertMany(... ordered(false)).
  */
+@Service(value = "MongoOrderInsertControlService")
 public class MongoOrderInsertControlService {
 
     private final MongoCollection<Document> ordersCollection;
@@ -28,9 +28,9 @@ public class MongoOrderInsertControlService {
 
     public MongoOrderInsertControlService(
             MongoClient mongoClient,
-            @Value("${app.mongo.database}") String database,
-            @Value("${app.mongo.collection}") String ordersCollectionName,
-            @Value("${app.mongo.dead-letter-collection}") String deadLetterCollectionName
+            @Value("${app.mongo.database:}") String database,
+            @Value("${app.mongo.collection:}") String ordersCollectionName,
+            @Value("${app.mongo.dead-letter-collection:dead}") String deadLetterCollectionName
     ) {
         this.ordersCollection = mongoClient
                 .getDatabase(database)

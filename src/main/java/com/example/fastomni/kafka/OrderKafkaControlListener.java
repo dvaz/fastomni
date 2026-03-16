@@ -8,6 +8,7 @@ import java.util.concurrent.Semaphore;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.header.Header;
 import org.bson.Document;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
@@ -33,7 +34,7 @@ public class OrderKafkaControlListener {
 
     public OrderKafkaControlListener(
             OrderMapper mapper,
-            MongoOrderInsertControlService insertService,
+            @Qualifier("MongoOrderInsertControlService") MongoOrderInsertControlService insertService,
             @Value("${app.insert.batch-size:1000}") int insertBatchSize,
             @Value("${app.insert.parallelism:8}") int parallelism
     ) {
@@ -45,7 +46,7 @@ public class OrderKafkaControlListener {
 
     @KafkaListener(
             topics = "orders-topic",
-            containerFactory = "kafkaListenerContainerFactory"
+            containerFactory = "kafkaListenerContainerFactoryByControl"
     )
     public void consume(
             List<ConsumerRecord<String, OrderEvent>> records,

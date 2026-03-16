@@ -15,8 +15,8 @@ import org.springframework.util.backoff.FixedBackOff;
  */
 @Configuration
 public class KafkaConsumerControlConfig {
-    @Bean
-    ConcurrentKafkaListenerContainerFactory<String, Object> kafkaListenerContainerFactory(
+    @Bean(name = "kafkaListenerContainerFactoryByControl")
+    ConcurrentKafkaListenerContainerFactory<String, Object> kafkaListenerContainerFactoryByControl(
             ConsumerFactory<String, Object> consumerFactory,
             @Value("${spring.kafka.listener.concurrency:6}") int concurrency,
             @Value("${spring.kafka.listener.poll-timeout:1500}") long pollTimeout
@@ -29,13 +29,13 @@ public class KafkaConsumerControlConfig {
         factory.setConcurrency(concurrency);
         factory.getContainerProperties().setPollTimeout(pollTimeout);
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
-        factory.setCommonErrorHandler(commonErrorHandler());
+        factory.setCommonErrorHandler(commonErrorHandlerByControl());
 
         return factory;
     }
 
-    @Bean
-    CommonErrorHandler commonErrorHandler() {
+    @Bean(name = "commonErrorHandlerByControl")
+    CommonErrorHandler commonErrorHandlerByControl() {
         DefaultErrorHandler errorHandler = new DefaultErrorHandler(new FixedBackOff(1000L, 2L));
         errorHandler.addNotRetryableExceptions(
                 IllegalArgumentException.class,
