@@ -1,0 +1,71 @@
+spring:
+  application:
+    name: fast-omni
+  threads:
+    virtual:
+      enabled: false
+
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/orderdb?compressors=snappy
+
+  kafka:
+    bootstrap-servers: localhost:9092
+
+    producer:
+      client-id: orders-producer
+      acks: all
+      retries: 10
+      batch-size: 65536
+      buffer-memory: 33554432
+      compression-type: snappy
+      properties:
+        linger.ms: 20
+        enable.idempotence: true
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+    consumer:
+      group-id: orders-group
+      enable-auto-commit: false
+      auto-offset-reset: earliest
+      max-poll-records: 1000
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring.json.value.default.type: com.example.kafkamongo.kafka.OrderEvent
+        spring.json.trusted.packages: com.example.kafkamongo.kafka
+        fetch.min.bytes: 1048576
+        fetch.max.wait.ms: 250
+        max.partition.fetch.bytes: 5242880
+        max.poll.interval.ms: 300000
+        session.timeout.ms: 30000
+        heartbeat.interval.ms: 10000
+
+app:
+  kafka:
+    orders-topic: orders-topic
+    bulk-topic: orders-topic-bulk
+    single-topic: orders-topic-single
+
+  consumer:
+    bulk:
+      enabled: true
+      concurrency: 6
+      batch-size: 1000
+      parallelism: 8
+    single:
+      enabled: false
+      concurrency: 3
+
+  mongo:
+    database: orderdb
+    collection: orders
+    dead-letter-collection: orders_dead_letter
+    max-pool-size: 120
+    min-pool-size: 20
+    max-connecting: 12
+    connect-timeout-ms: 3000
+    read-timeout-ms: 15000
+    server-selection-timeout-ms: 3000

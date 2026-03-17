@@ -120,3 +120,26 @@ if (header != null) {
     // e registrar bytes brutos do payload, se necessário
 }
 ```
+
+
+src/main/java/com/example/kafkamongo
+├─ KafkaMongoApplication.java
+├─ config
+│  ├─ KafkaConsumerConfig.java
+│  ├─ KafkaProducerConfig.java
+│  └─ MongoClientConfig.java
+├─ kafka
+│  └─ OrderEvent.java
+├─ mongo
+│  ├─ DeadLetterDocument.java
+│  └─ OrderDocument.java
+├─ producer
+│  └─ OrderProducer.java
+├─ service
+│  ├─ DeadLetterService.java
+│  ├─ MongoBulkInsertService.java
+│  ├─ MongoSimpleInsertService.java
+│  └─ OrderMapper.java
+└─ consumer
+├─ BulkOrderKafkaListener.java
+└─ SimpleOrderKafkaListener.java

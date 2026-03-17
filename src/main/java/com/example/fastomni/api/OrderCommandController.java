@@ -37,9 +37,8 @@ public class OrderCommandController {
 
         return orderProducer.send(
                 event,
-                request.orderId(),
+                "topic-name",
                 request.tenantId(),
-                correlationId,
                 "order-command-api"
         ).thenApply(result -> ResponseEntity.ok(
                 "Evento enviado com sucesso. topic=%s partition=%d offset=%d correlationId=%s"
@@ -66,7 +65,7 @@ public class OrderCommandController {
 
         orderProducer.sendWithCallback(
                 event,
-                request.orderId(),
+                "topic",
                 request.tenantId(),
                 correlationId,
                 "order-command-api"

@@ -12,6 +12,7 @@ public record OrderDocument(
         String tenantId,
         String correlationId,
         String sourceSystem,
+        String eventType,
         Instant receivedAt
-)
-{}
+) {
+}
