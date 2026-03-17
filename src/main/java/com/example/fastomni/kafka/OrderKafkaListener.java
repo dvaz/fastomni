@@ -78,7 +78,7 @@ public class OrderKafkaListener {
                     throw new IllegalArgumentException("Mensagem inválida: orderId ausente");
                 }
 
-                OrderDocument order = mapper.toOrderDocument(event);
+                OrderDocument order = mapper.toOrderDocument(event,null,null,null);
                 docs.add(mapper.toBsonDocument(order));
             }
 
