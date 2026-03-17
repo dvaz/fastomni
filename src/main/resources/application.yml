@@ -7,10 +7,11 @@ spring:
 
   data:
     mongodb:
-      uri: mongodb://localhost:27017/orderdb?compressors=snappy
+      uri: mongodb://root:admin@127.0.0.1:27017/orderdb?authSource=admin&compressors=snappy
+#      uri: mongodb://root:admin@localhost:27017/orderdb?compressors=snappy
 
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: localhost:29092
 
     producer:
       client-id: orders-producer
@@ -34,14 +35,17 @@ spring:
       value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
       properties:
         spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
-        spring.json.value.default.type: com.example.kafkamongo.kafka.OrderEvent
-        spring.json.trusted.packages: com.example.kafkamongo.kafka
+        spring.json.value.default.type: com.example.fastomni.kafka.OrderEvent
+        spring.json.trusted.packages: com.example.fastomni.kafka
         fetch.min.bytes: 1048576
         fetch.max.wait.ms: 250
         max.partition.fetch.bytes: 5242880
         max.poll.interval.ms: 300000
         session.timeout.ms: 30000
         heartbeat.interval.ms: 10000
+
+springdoc:
+  packages-to-scan: com.example.fastomni.api
 
 app:
   kafka:

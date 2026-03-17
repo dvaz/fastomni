@@ -8,6 +8,8 @@ import java.util.concurrent.CompletableFuture;
 
 import com.example.fastomni.kafka.OrderEvent;
 import com.example.fastomni.kafka.OrderProducer;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/orders")
+@Tag(name = "Orders", description = "API to POC kafka+mongo")
+
 public class OrderCommandController {
 
     private final OrderProducer orderProducer;
@@ -23,8 +27,11 @@ public class OrderCommandController {
         this.orderProducer = orderProducer;
     }
 
-    @PostMapping("/publish")
-    public CompletableFuture<ResponseEntity<String>> publish(@RequestBody PublishOrderRequest request) {
+    @PostMapping("/publish/")
+    @Operation(summary = "To producer message ", description = "Return Entity Information")
+    public CompletableFuture<ResponseEntity<String>> publish(
+            @RequestParam("topic-to-save") String topicNameToSave,
+            @RequestBody PublishOrderRequest request) {
         String correlationId = UUID.randomUUID().toString();
 
         OrderEvent event = new OrderEvent(
@@ -37,7 +44,7 @@ public class OrderCommandController {
 
         return orderProducer.send(
                 event,
-                "topic-name",
+                (topicNameToSave==null || topicNameToSave.isEmpty() || topicNameToSave.isBlank())?"topic-fake":topicNameToSave,
                 request.tenantId(),
                 "order-command-api"
         ).thenApply(result -> ResponseEntity.ok(
@@ -52,7 +59,9 @@ public class OrderCommandController {
     }
 
     @PostMapping("/publish-fire-and-forget")
-    public ResponseEntity<String> publishFireAndForget(@RequestBody PublishOrderRequest request) {
+    public ResponseEntity<String> publishFireAndForget(
+            @RequestParam("topic-to-save") String topicNameToSave,
+            @RequestBody PublishOrderRequest request) {
         String correlationId = UUID.randomUUID().toString();
 
         OrderEvent event = new OrderEvent(
@@ -65,7 +74,7 @@ public class OrderCommandController {
 
         orderProducer.sendWithCallback(
                 event,
-                "topic",
+                (topicNameToSave==null || topicNameToSave.isEmpty() || topicNameToSave.isBlank())?"topic-fake":topicNameToSave,
                 request.tenantId(),
                 correlationId,
                 "order-command-api"

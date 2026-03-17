@@ -28,7 +28,8 @@ dependencies {
 	//para compressão de conexões mongodb
 	implementation 'org.xerial.snappy:snappy-java:1.1.10.4'
 
-
+/// open api --- swagger
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.kafka:spring-kafka-test'
 
